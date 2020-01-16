@@ -5,6 +5,7 @@ import throttle from './throttle'
  * TODO:
  * [ ] window resize
  * [ ] deps
+ * [ ] support ssr
  */
 
 type ScrollOptions = {
