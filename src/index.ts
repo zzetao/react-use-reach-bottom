@@ -41,8 +41,6 @@ export default function useReachBottom(callback?: Callback, options: ScrollOptio
       }
     }, throttleDelay || 200)
 
-    setValue(calcDistance(container))
-
     getListener(element).addEventListener('scroll', handleScroll)
     return () => {
       getListener(element).removeEventListener('scroll', handleScroll)

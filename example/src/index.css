@@ -7,6 +7,11 @@ body {
 .container {
   position: relative;
 }
+.container.limit-height {
+  overflow-y: auto;
+  height: 400px;
+  box-shadow: 0 0 14px rgba(0,0,0,0.1);
+}
 
 .content {
   padding-bottom: 100px;
@@ -36,7 +41,26 @@ body {
   border-radius: 100px;
   color: #8692ea;
   background-color: #fff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  z-index: 2;;
+}
+
+.toggle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  position: fixed;
+  margin: 40px;
+  margin-top: 115px;
+  font-size: 14px;
+  border: 3px solid #8692ea;
+  border-radius: 80px;
+  color: #fff;
+  background-color: #8692ea;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); 
+  cursor: pointer;
 }
 
 .loading {
