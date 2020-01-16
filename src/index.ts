@@ -1,15 +1,21 @@
 import * as React from 'react'
 import throttle from './throttle'
 
+/**
+ * TODO:
+ * [ ] window resize
+ * [ ] deps
+ */
+
 type ScrollOptions = {
-  element?: HTMLElement | React.RefObject<HTMLElement>
+  element?: React.RefObject<HTMLElement> | Window
   throttleDelay?: number
 }
 
-type Callback = (percentum: number, e: Event) => void
+type Callback = (distance: number, e: Event) => void
 
 const defaultOptions = {
-  element: document.documentElement,
+  element: window,
   throttleDelay: 200
 }
 
@@ -25,39 +31,43 @@ export default function useReachBottom(callback?: Callback, options: ScrollOptio
   }, [value])
 
   React.useEffect(() => {
+    const container = getContainerElement(element)
+
     const handleScroll = throttle(e => {
-      const el = getElement(element || document.documentElement)
-      if (el) {
-        const { scrollTop, scrollHeight, clientHeight } = el
-        const val = (scrollTop + clientHeight) / scrollHeight
-        savedCallback.current(val, e)
-        setValue(val)
+      if (container) {
+        const distance = calcDistance(container)
+        savedCallback.current(distance, e)
+        setValue(distance)
       }
     }, throttleDelay || 200)
 
-    getListener(element).addEventListener('scroll', handleScroll)
+    setValue(calcDistance(container))
 
+    getListener(element).addEventListener('scroll', handleScroll)
     return () => {
       getListener(element).removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [options.element])
 
   return value
 }
 
-function getElement(ref: React.RefObject<HTMLElement> | HTMLElement): HTMLElement | null {
-  if (!(ref instanceof HTMLElement)) {
-    return ref.current
-  }
-  return ref
+function calcDistance(element: HTMLElement): number {
+  const { scrollTop, scrollHeight, clientHeight } = element
+  return (scrollTop + clientHeight) / scrollHeight
 }
 
-function getListener(ref: React.RefObject<HTMLElement> | HTMLElement | undefined) {
-  if (!ref || ref === document.documentElement || ref === document.body) {
+function getContainerElement(ref: any): HTMLElement {
+  if (!ref || ref === window || !ref.current || ref instanceof HTMLElement) {
+    return document.documentElement
+  }
+  return ref.current
+}
+
+function getListener(ref: any): HTMLElement | Window {
+  if (!ref || ref === window || !ref.current || ref instanceof HTMLElement) {
     return window
+  } else {
+    return ref.current
   }
-  if (!(ref instanceof HTMLElement)) {
-    return ref.current || window
-  }
-  return ref
 }
